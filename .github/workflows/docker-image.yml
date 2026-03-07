@@ -35,11 +35,11 @@ jobs:
       run: mvn test
 
     # 5️⃣ SonarQube Analysis
-    - name: SonarQube Scan
-      run: mvn sonar:sonar \
-        -Dsonar.projectKey=spring-petclinic \
-        -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-        -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+    # - name: SonarQube Scan
+    #  run: mvn sonar:sonar \
+     #   -Dsonar.projectKey=spring-petclinic \
+      #  -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+       # -Dsonar.login=${{ secrets.SONAR_TOKEN }} 
 
     # 6️⃣ Package JAR
     - name: Package Application
