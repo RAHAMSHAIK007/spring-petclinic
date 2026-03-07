@@ -2,22 +2,19 @@ name: Spring Boot CI Pipeline
 
 on:
   push:
-    branches:
-      - main
-      - master
-  pull_request:
-    branches:
-      - main
-      - master
+    branches: [ "main", "master" ]
+
+env:
+  IMAGE_NAME: rahamshaik/petclinic
 
 jobs:
 
-  build:
+  build-test-sonar-docker:
     runs-on: ubuntu-latest
 
     steps:
 
-    # 1️⃣ Checkout the code from GitHub
+    # 1️⃣ Checkout Code
     - name: Checkout Source Code
       uses: actions/checkout@v4
 
@@ -29,25 +26,45 @@ jobs:
         java-version: '17'
         cache: maven
 
-    # 3️⃣ Verify Maven Installation
-    - name: Verify Maven
-      run: mvn -version
-
-    # 4️⃣ Build the Application
-    - name: Build Spring Boot Application
+    # 3️⃣ Build Application
+    - name: Build Application
       run: mvn clean compile
 
-    # 5️⃣ Run Unit Tests
+    # 4️⃣ Run Unit Tests
     - name: Run Unit Tests
       run: mvn test
 
-    # 6️⃣ Package the JAR File
+    # 5️⃣ SonarQube Analysis
+    - name: SonarQube Scan
+      run: mvn sonar:sonar \
+        -Dsonar.projectKey=spring-petclinic \
+        -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+        -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+    # 6️⃣ Package JAR
     - name: Package Application
       run: mvn package -DskipTests
 
     # 7️⃣ Upload JAR Artifact
-    - name: Upload JAR Artifact
+    - name: Upload JAR
       uses: actions/upload-artifact@v4
       with:
         name: springboot-jar
         path: target/*.jar
+
+    # 8️⃣ Login to DockerHub
+    - name: DockerHub Login
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    # 9️⃣ Build Docker Image
+    - name: Build Docker Image
+      run: |
+        docker build -t $IMAGE_NAME:latest .
+
+    # 🔟 Push Docker Image
+    - name: Push Docker Image
+      run: |
+        docker push $IMAGE_NAME:latest
