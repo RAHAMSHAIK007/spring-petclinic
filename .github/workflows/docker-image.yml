@@ -81,8 +81,4 @@ jobs:
     # Deploy to Kubernetes
     - name: Deploy to Kubernetes
       run: |
-        kubectl apply -f k8s/namespace.yml
-        kubectl apply -f k8s/configmap.yml
-        kubectl apply -f k8s/deployment.yml
-        kubectl apply -f k8s/service.yml
-        kubectl apply -f k8s/ingress.yml
+        kubectl apply -f k8s/*
