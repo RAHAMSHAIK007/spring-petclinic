@@ -78,6 +78,6 @@ jobs:
         mkdir -p ~/.kube
         echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
 
-    - name: Deploy to Kubernetes
-      run: |
-        kubectl apply -f ./k8s/
+   # - name: Deploy to Kubernetes
+      #run: |
+     #   kubectl apply -f ./k8s/
